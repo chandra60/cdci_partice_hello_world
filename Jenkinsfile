@@ -1,10 +1,20 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven'
+    }
+
     stages {
-        stage('Hello') {
+        stage('Build WAR') {
             steps {
-                echo 'Hello World from Jenkins Pipeline'
+                sh 'mvn clean package'
+            }
+        }
+
+        stage('Archive') {
+            steps {
+                archiveArtifacts artifacts: 'target/*.war'
             }
         }
     }
