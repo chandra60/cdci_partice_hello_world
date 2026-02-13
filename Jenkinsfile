@@ -6,15 +6,25 @@ pipeline {
     }
 
     stages {
+
         stage('Build WAR') {
             steps {
                 sh 'mvn clean package'
             }
         }
 
-        stage('Archive') {
+        stage('Build Docker Image') {
             steps {
-                archiveArtifacts artifacts: 'target/*.war'
+                sh 'docker build -t hello-app .'
+            }
+        }
+
+        stage('Deploy Container') {
+            steps {
+                sh '''
+                docker rm -f hello-container || true
+                docker run -d -p 8081:8080 --name hello-container hello-app
+                '''
             }
         }
     }
